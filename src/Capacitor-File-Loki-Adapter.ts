@@ -2,37 +2,6 @@ import { Filesystem, FilesystemDirectory, FilesystemEncoding } from "@capacitor/
 
 const directoryName = 'database';
 
-async function createLocalDirectory(opts: { dbName: string }) {
-    try {
-        await Filesystem.mkdir({
-            path: directoryName,
-            directory: FilesystemDirectory.Documents,
-            recursive: false // like mkdir -p
-        });
-        return readLocalFile({ dbName: opts.dbName });
-    } catch (e) {
-        try {
-            return await readLocalFile({ dbName: opts.dbName });
-        } catch (error) {
-            throw error;
-        }
-    }
-}
-
-async function readLocalFile(opts: { dbName: string }) {
-    try {
-        const lokiDBContents = await Filesystem.readFile({
-            path: `${directoryName}/${opts.dbName}.txt`,
-            directory: FilesystemDirectory.Documents,
-            encoding: FilesystemEncoding.UTF8
-        });
-        return lokiDBContents.data;
-    } catch (error) {
-        throw error;
-    }
-
-}
-
 export function CapacitorFileLokiAdapter() { }
 
 CapacitorFileLokiAdapter.prototype.loadDatabase = async function (dbName: string, callback: Function) {
@@ -68,3 +37,33 @@ CapacitorFileLokiAdapter.prototype.deleteDatabase = async function deleteDatabas
         callback(new Error(error));
     }
 };
+
+async function createLocalDirectory(opts: { dbName: string }) {
+    try {
+        await Filesystem.mkdir({
+            path: directoryName,
+            directory: FilesystemDirectory.Documents,
+            recursive: false // like mkdir -p
+        });
+        return readLocalFile({ dbName: opts.dbName });
+    } catch (e) {
+        try {
+            return await readLocalFile({ dbName: opts.dbName });
+        } catch (error) {
+            throw error;
+        }
+    }
+}
+
+async function readLocalFile(opts: { dbName: string }) {
+    try {
+        const lokiDBContents = await Filesystem.readFile({
+            path: `${directoryName}/${opts.dbName}.txt`,
+            directory: FilesystemDirectory.Documents,
+            encoding: FilesystemEncoding.UTF8
+        });
+        return lokiDBContents.data;
+    } catch (error) {
+        throw error;
+    }
+}
